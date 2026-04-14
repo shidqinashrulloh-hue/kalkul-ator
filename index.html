@@ -1,0 +1,423 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kalkulator Elektronika Terpadu - Shidqi Nashrulloh</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;800&family=JetBrains+Mono&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-dark: #050507;
+            --accent-blue: #0ea5e9;
+            --accent-purple: #8b5cf6;
+        }
+
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: var(--bg-dark);
+            color: #f8fafc;
+            overflow-x: hidden;
+            scroll-snap-type: y mandatory;
+            height: 100vh;
+        }
+
+        section {
+            height: 100vh;
+            width: 100vw;
+            scroll-snap-align: start;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            padding: 2rem;
+            overflow: hidden;
+        }
+
+        /* Enhanced Glassmorphism */
+        .glass-card {
+            background: rgba(255, 255, 255, 0.02);
+            backdrop-filter: blur(25px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 2.5rem;
+            transition: all 0.6s cubic-bezier(0.23, 1, 0.32, 1);
+        }
+
+        .glass-card:hover {
+            border-color: rgba(14, 165, 233, 0.4);
+            background: rgba(255, 255, 255, 0.04);
+            transform: translateY(-5px);
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+        }
+
+        /* Animated Blobs */
+        .bg-blob {
+            position: absolute;
+            width: 600px;
+            height: 600px;
+            background: radial-gradient(circle, rgba(139, 92, 246, 0.12) 0%, transparent 70%);
+            filter: blur(80px);
+            z-index: -1;
+            animation: move 25s infinite alternate ease-in-out;
+        }
+
+        @keyframes move {
+            from { transform: translate(-15%, -15%) rotate(0deg); }
+            to { transform: translate(25%, 25%) rotate(90deg); }
+        }
+
+        .formula-box {
+            font-family: 'JetBrains Mono', monospace;
+            background: rgba(0, 0, 0, 0.4);
+            border-left: 4px solid var(--accent-blue);
+            transition: transform 0.3s ease;
+        }
+
+        .formula-box:hover {
+            transform: scale(1.02);
+        }
+
+        input {
+            background: rgba(255, 255, 255, 0.03) !important;
+            border: 1px solid rgba(255, 255, 255, 0.08) !important;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        input:focus {
+            border-color: var(--accent-blue) !important;
+            background: rgba(255, 255, 255, 0.06) !important;
+            box-shadow: 0 0 20px rgba(14, 165, 233, 0.2);
+            outline: none;
+        }
+
+        /* Floating Badge */
+        .creator-badge {
+            position: fixed;
+            bottom: 2rem;
+            left: 2rem;
+            padding: 0.75rem 1.5rem;
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 9999px;
+            font-size: 0.875rem;
+            z-index: 100;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: all 0.3s ease;
+        }
+
+        .creator-badge:hover {
+            background: rgba(14, 165, 233, 0.1);
+            border-color: var(--accent-blue);
+        }
+
+        .nav-dots {
+            position: fixed;
+            right: 2.5rem;
+            top: 50%;
+            transform: translateY(-50%);
+            display: flex;
+            flex-direction: column;
+            gap: 1.25rem;
+            z-index: 100;
+        }
+
+        .dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.15);
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .dot.active {
+            background: var(--accent-blue);
+            transform: scale(1.6);
+            box-shadow: 0 0 15px var(--accent-blue);
+        }
+
+        .slide-up {
+            animation: slideUp 1s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(60px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Particle Overlay */
+        .particles {
+            position: absolute;
+            inset: 0;
+            background-image: radial-gradient(circle, rgba(255,255,255,0.05) 1px, transparent 1px);
+            background-size: 50px 50px;
+            z-index: -2;
+            opacity: 0.5;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="particles"></div>
+
+    <div class="creator-badge">
+        <span class="w-2 h-2 rounded-full bg-sky-500 animate-pulse"></span>
+        <span>Dibuat oleh: <span class="font-bold text-white">Shidqi Nashrulloh</span></span>
+    </div>
+
+    <div class="nav-dots">
+        <div class="dot active" onclick="scrollToSection(0)"></div>
+        <div class="dot" onclick="scrollToSection(1)"></div>
+        <div class="dot" onclick="scrollToSection(2)"></div>
+        <div class="dot" onclick="scrollToSection(3)"></div>
+        <div class="dot" onclick="scrollToSection(4)"></div>
+    </div>
+
+    <!-- SLIDE 1: INTRO -->
+    <section id="s1">
+        <div class="bg-blob" style="top: 10%; left: 10%;"></div>
+        <div class="text-center slide-up px-4">
+            <span class="inline-block py-1 px-3 rounded-full bg-sky-500/10 text-sky-400 text-xs font-bold tracking-widest uppercase mb-6 border border-sky-500/20">
+                Engineering Toolkit v2.0
+            </span>
+            <h1 class="text-7xl md:text-9xl font-black mb-8 tracking-tighter leading-none">
+                CALC<span class="text-sky-500">TRONIX</span>
+            </h1>
+            <p class="text-xl md:text-2xl text-slate-400 max-w-3xl mx-auto leading-relaxed font-light">
+                Platform kalkulasi komponen elektronika modern dengan presisi tinggi. Solusi cerdas untuk perancangan sirkuit Anda.
+            </p>
+            <div class="mt-16 flex flex-col md:flex-row justify-center gap-6">
+                <button onclick="scrollToSection(1)" class="px-10 py-5 bg-sky-500 hover:bg-sky-400 text-black font-black rounded-2xl transition-all hover:scale-105 shadow-lg shadow-sky-500/20 active:scale-95">
+                    Mulai Eksplorasi
+                </button>
+                <div class="flex items-center gap-4 text-slate-500 font-mono text-sm px-6">
+                    <span>Scroll ke bawah</span>
+                    <span class="animate-bounce">↓</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- SLIDE 2: PENGERTIAN & RUMUS RESISTOR -->
+    <section id="s2">
+        <div class="bg-blob" style="bottom: 10%; right: 10%; background: radial-gradient(circle, rgba(14, 165, 233, 0.1) 0%, transparent 70%);"></div>
+        <div class="max-w-6xl w-full grid grid-cols-1 md:grid-cols-2 gap-16 items-center">
+            <div class="glass-card p-12">
+                <div class="flex items-center gap-4 mb-8">
+                    <span class="text-5xl font-black text-sky-500/20">01</span>
+                    <h2 class="text-5xl font-bold text-white">Resistor</h2>
+                </div>
+                <p class="text-lg text-slate-300 mb-10 leading-relaxed font-light">
+                    Komponen pasif yang berfungsi menghambat aliran arus listrik. Dalam desain sirkuit, resistor adalah kunci untuk kontrol tegangan dan proteksi arus.
+                </p>
+                <div class="space-y-4">
+                    <div class="formula-box p-6 rounded-2xl">
+                        <p class="text-xs text-sky-400 mb-2 uppercase tracking-widest font-bold">Koneksi Seri</p>
+                        <code class="text-2xl text-white font-bold">R<sub>t</sub> = R₁ + R₂ + ...</code>
+                    </div>
+                    <div class="formula-box p-6 rounded-2xl !border-slate-600">
+                        <p class="text-xs text-slate-400 mb-2 uppercase tracking-widest font-bold">Koneksi Paralel</p>
+                        <code class="text-2xl text-white font-bold">1/R<sub>t</sub> = 1/R₁ + 1/R₂ + ...</code>
+                    </div>
+                </div>
+            </div>
+            <div class="relative group">
+                <div class="absolute -inset-1 bg-gradient-to-r from-sky-500 to-purple-500 rounded-3xl blur opacity-20 group-hover:opacity-40 transition duration-1000"></div>
+                <div class="relative rounded-3xl overflow-hidden shadow-2xl border border-white/10 aspect-square md:aspect-auto h-[450px]">
+                    <img src="https://images.unsplash.com/photo-1555664424-778a1e5e1b48?q=80&w=1000&auto=format&fit=crop" alt="Resistor pada sirkuit" class="w-full h-full object-cover grayscale hover:grayscale-0 transition-all duration-700">
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- SLIDE 3: KALKULATOR RESISTOR -->
+    <section id="s3" class="bg-[#08080a]">
+        <div class="max-w-2xl w-full text-center px-4">
+            <h2 class="text-4xl font-bold mb-4 tracking-tight">Kalkulator Resistor</h2>
+            <p class="text-slate-500 mb-12">Masukkan nilai hambatan untuk mendapatkan hasil total instan.</p>
+            <div class="glass-card p-12 relative overflow-hidden">
+                <div class="absolute top-0 right-0 p-4 opacity-5">
+                    <svg width="100" height="100" viewBox="0 0 24 24" fill="white"><path d="M21,11H19.5V13H21V11M17,11H14V13H17V11M12,11H9V13H12V11M7.5,11H3V13H7.5V11M21,7H19.5V9H21V7M17,7H14V9H17V7M12,7H9V9H12V7M7.5,7H3V9H7.5V7M21,15H19.5V17H21V15M17,15H14V17H17V15M12,15H9V17H12V15M7.5,15H3V17H7.5V15Z"/></svg>
+                </div>
+                <div class="space-y-8 relative z-10">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div class="text-left">
+                            <label class="block text-xs font-bold text-slate-400 mb-3 uppercase tracking-wider ml-1">Nilai R1 (Ω)</label>
+                            <input type="number" id="r1" class="w-full p-5 rounded-2xl text-white text-lg font-mono" placeholder="0">
+                        </div>
+                        <div class="text-left">
+                            <label class="block text-xs font-bold text-slate-400 mb-3 uppercase tracking-wider ml-1">Nilai R2 (Ω)</label>
+                            <input type="number" id="r2" class="w-full p-5 rounded-2xl text-white text-lg font-mono" placeholder="0">
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <button onclick="calculateResistor('seri')" class="group relative py-5 bg-white/5 hover:bg-white/10 rounded-2xl transition-all font-bold border border-white/5 overflow-hidden">
+                            <span class="relative z-10">HITUNG SERI</span>
+                            <div class="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000"></div>
+                        </button>
+                        <button onclick="calculateResistor('paralel')" class="py-5 bg-sky-500 text-black rounded-2xl transition-all font-black hover:bg-sky-400 shadow-xl shadow-sky-500/10 active:scale-95">
+                            HITUNG PARALEL
+                        </button>
+                    </div>
+                </div>
+                <div id="res-result" class="mt-12 p-8 bg-black/40 rounded-3xl border border-sky-500/20 hidden">
+                    <p class="text-xs font-bold text-sky-500 uppercase tracking-widest">Hambatan Total</p>
+                    <p id="res-val" class="text-5xl font-black text-white mt-3 tracking-tighter">0 Ω</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- SLIDE 4: PENGERTIAN & RUMUS KAPASITOR -->
+    <section id="s4">
+        <div class="max-w-6xl w-full grid grid-cols-1 md:grid-cols-2 gap-16 items-center">
+            <div class="order-2 md:order-1 relative group">
+                <div class="absolute -inset-1 bg-gradient-to-r from-purple-500 to-pink-500 rounded-3xl blur opacity-20 group-hover:opacity-40 transition duration-1000"></div>
+                <div class="relative rounded-3xl overflow-hidden shadow-2xl border border-white/10 aspect-square md:aspect-auto h-[450px]">
+                    <img src="https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=1000&auto=format&fit=crop" alt="Komponen kapasitor" class="w-full h-full object-cover grayscale hover:grayscale-0 transition-all duration-700">
+                </div>
+            </div>
+            <div class="glass-card p-12 order-1 md:order-2">
+                <div class="flex items-center gap-4 mb-8">
+                    <span class="text-5xl font-black text-purple-500/20">02</span>
+                    <h2 class="text-5xl font-bold text-white">Kapasitor</h2>
+                </div>
+                <p class="text-lg text-slate-300 mb-10 leading-relaxed font-light">
+                    Penyimpan muatan listrik dalam medan elektrostatik. Penting untuk penyaringan sinyal, stabilisasi daya, dan pengaturan waktu.
+                </p>
+                <div class="space-y-4">
+                    <div class="formula-box p-6 rounded-2xl !border-purple-500">
+                        <p class="text-xs text-purple-400 mb-2 uppercase tracking-widest font-bold">Koneksi Paralel</p>
+                        <code class="text-2xl text-white font-bold">C<sub>t</sub> = C₁ + C₂ + ...</code>
+                    </div>
+                    <div class="formula-box p-6 rounded-2xl !border-slate-600">
+                        <p class="text-xs text-slate-400 mb-2 uppercase tracking-widest font-bold">Koneksi Seri</p>
+                        <code class="text-2xl text-white font-bold">1/C<sub>t</sub> = 1/C₁ + 1/C₂ + ...</code>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- SLIDE 5: KALKULATOR KAPASITOR -->
+    <section id="s5" class="bg-[#050505]">
+        <div class="max-w-2xl w-full text-center px-4">
+            <h2 class="text-4xl font-bold mb-4 tracking-tight">Kalkulator Kapasitor</h2>
+            <p class="text-slate-500 mb-12">Hitung kapasitansi total untuk rangkaian penyimpanan energi Anda.</p>
+            <div class="glass-card p-12 border-purple-500/20">
+                <div class="space-y-8">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div class="text-left">
+                            <label class="block text-xs font-bold text-slate-400 mb-3 uppercase tracking-wider ml-1">Nilai C1 (F)</label>
+                            <input type="number" id="c1" class="w-full p-5 rounded-2xl text-white text-lg font-mono" placeholder="0">
+                        </div>
+                        <div class="text-left">
+                            <label class="block text-xs font-bold text-slate-400 mb-3 uppercase tracking-wider ml-1">Nilai C2 (F)</label>
+                            <input type="number" id="c2" class="w-full p-5 rounded-2xl text-white text-lg font-mono" placeholder="0">
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <button onclick="calculateCapacitor('seri')" class="py-5 bg-purple-500/10 hover:bg-purple-500/20 text-purple-400 border border-purple-500/30 rounded-2xl transition-all font-bold active:scale-95">
+                            HITUNG SERI
+                        </button>
+                        <button onclick="calculateCapacitor('paralel')" class="py-5 bg-purple-600 text-white rounded-2xl transition-all font-black hover:bg-purple-500 shadow-xl shadow-purple-500/10 active:scale-95">
+                            HITUNG PARALEL
+                        </button>
+                    </div>
+                </div>
+                <div id="cap-result" class="mt-12 p-8 bg-black/40 rounded-3xl border border-purple-500/20 hidden">
+                    <p class="text-xs font-bold text-purple-400 uppercase tracking-widest">Kapasitansi Total</p>
+                    <p id="cap-val" class="text-5xl font-black text-white mt-3 tracking-tighter">0 F</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <script>
+        // Smooth scrolling function with index tracking
+        function scrollToSection(index) {
+            const sections = document.querySelectorAll('section');
+            sections[index].scrollIntoView({ behavior: 'smooth' });
+        }
+
+        // Improved Active Dot Observer
+        const observerOptions = {
+            threshold: 0.5
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const id = entry.target.id;
+                    const index = parseInt(id.replace('s', '')) - 1;
+                    updateDots(index);
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('section').forEach(section => {
+            observer.observe(section);
+        });
+
+        function updateDots(activeIndex) {
+            const dots = document.querySelectorAll('.dot');
+            dots.forEach((dot, index) => {
+                if (index === activeIndex) {
+                    dot.classList.add('active');
+                } else {
+                    dot.classList.remove('active');
+                }
+            });
+        }
+
+        // Calculation Logic with Validation
+        function calculateResistor(type) {
+            const r1 = parseFloat(document.getElementById('r1').value) || 0;
+            const r2 = parseFloat(document.getElementById('r2').value) || 0;
+            const resultBox = document.getElementById('res-result');
+            const resultVal = document.getElementById('res-val');
+            
+            if(r1 === 0 && r2 === 0) return;
+
+            let total;
+            if(type === 'seri') {
+                total = r1 + r2;
+            } else {
+                total = (r1 > 0 && r2 > 0) ? (r1 * r2) / (r1 + r2) : 0;
+            }
+
+            resultVal.innerText = formatNumber(total) + " Ω";
+            resultBox.classList.remove('hidden');
+            resultBox.classList.add('slide-up');
+        }
+
+        function calculateCapacitor(type) {
+            const c1 = parseFloat(document.getElementById('c1').value) || 0;
+            const c2 = parseFloat(document.getElementById('c2').value) || 0;
+            const resultBox = document.getElementById('cap-result');
+            const resultVal = document.getElementById('cap-val');
+
+            if(c1 === 0 && c2 === 0) return;
+
+            let total;
+            if(type === 'paralel') {
+                total = c1 + c2;
+            } else {
+                total = (c1 > 0 && c2 > 0) ? (c1 * c2) / (c1 + c2) : 0;
+            }
+
+            resultVal.innerText = formatNumber(total) + " F";
+            resultBox.classList.remove('hidden');
+            resultBox.classList.add('slide-up');
+        }
+
+        function formatNumber(num) {
+            if (num === 0) return "0";
+            return num % 1 === 0 ? num : num.toFixed(3);
+        }
+    </script>
+</body>
+</html>
